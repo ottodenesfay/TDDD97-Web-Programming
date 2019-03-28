@@ -1,2 +1,2 @@
 # Twidder
-Simple social media web application for the web programming course TDDD97 at Linköping University.
+Simple social media platform created in connection with the course TDDD97 Web Programming at Linköping University.
