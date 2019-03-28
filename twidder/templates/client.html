@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link href="{{ url_for('static',filename='client.css') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/hmac-sha256.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/enc-base64.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <title>Twidder | TDDD97</title>
+    <link rel="icon" href="static/chat.png">
+
+    <script type="text/view" id="welcomeview">
+      <header>
+        <div class="navtab" id="mynavtab">
+          <img src="static/chat_white.png" id="navicon">
+          <h3 class="navheader">Twidder</h3>
+          <nav>
+            <ul>
+              <li><a id="loginheaderbutton">Sign in</a></li>
+              <li role="separator" class="divider">|</li>
+              <li><a id="signupheaderbutton">Sign up</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <div class="bgwelcome"></div>
+        <div class="bgwelcome bgwelcome2"></div>
+        <div class="bgwelcome bgwelcome3"></div>
+      </div>
+
+      <div id="loginSliderDiv">
+        <div class="login">
+          <h2 id="loginheader">Sign in to your account and get going.</h2>
+          <form class="loginForm" method="post" onsubmit="SignInClicked(this); return false">
+            <p><input class="input-field" type="email" id="loginEmail" name="loginEmail" value="" placeholder="Email" required class="field"></p>
+            <p><input type="password" id ="loginPassword" name="loginPassword" value="" placeholder="Password" required class="field"></p>
+            <p><input type="submit" name="" value="Log in"></p>
+          </form>
+          <p id ="signinErrorBox"></p>
+        </div>
+
+        <div id="loginSignupSeparator"></div>
+
+        <div class="signup">
+          <h2 id="signupheader">Or create a new one if you have not already.</h2>
+          <form class="signupForm" id="signupForm" name="signupForm" method="post" onsubmit="SignUpClicked(this); return false">
+            <p><input type="email" name="regEmail" value="" placeholder="Email" required class="field"></p>
+            <p><input type="password" name="regPassword" value="" placeholder="Password" required minlength=7 class="field"></p>
+            <p><input type="password" name="regRepPassword" value="" placeholder="Repeat password" minlength=7 class="field"></p>
+            <p><input type="text" name="regFirstname" value="" placeholder="First Name" required class="field"></p>
+            <p><input type="text" name="regLastname" value="" placeholder="Last Name" required class="field"></p>
+            <p><select class="signupGender" name="regSex"></p>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+            <p><input type="text" name="regCity" value="" placeholder="City" required class="field"></p>
+            <p><input type="text" name="regCountry" value="" placeholder="Country" required class="field"></p>
+            <p><input type="submit" name="" value="Sign up"></p>
+          </form>
+          <p id ="signupErrorBox"></p>
+        </div>
+
+      </div>
+
+      <div class="welcomeContainerText">
+        <h1 id="welcomeHeader">A minimal social-networking web application.</h1>
+        <p id="welcomeText">Web application created in connection with the course TDDD97 Web Programming at Linköping University.</p>
+      </div>
+      <button class="welcomeContainerSignupButton">sign up now</button>
+      <button class="welcomeContainerVideoButton" onclick="welcomeContainerVideoButtonClicked()">cheeky video <i class="fa fa-play-circle" aria-hidden="true">&nbsp;</i></button>
+    </script>
+
+    <script type="text/view" id="homeview">
+      <header>
+        <div class="navtab" id="mynavtab">
+          <img src="static/chat_white.png" id="navicon">
+          <h3 class="navheader">Twidder</h3>
+          <nav>
+            <ul>
+              <li><a onclick="return homeClicked()" style="color: #00ed7b">Home</a></li>
+              <li><a onclick="return accountClicked()">Account</a></li>
+              <li><form class="browseNavForm" method="post" onsubmit="BrowseButtonClicked(this); return false;">
+                  <input type="email" name="browseSearchUser" value="" required placeholder="Search Twidder">
+                  <button type="submit" class="navSearchBtn">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+              </li>
+              <li role="separator" class="divider">|</li>
+              <li><a id="logoutheaderbutton" onclick="return logoutClicked()">Log out</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <div class="bg"></div>
+
+      <div class="homewrapper">
+        <div class="postMessageWrapper">
+          <form class="postMessageForm" method="post" onsubmit="return postMessageClicked(this)">
+            <input type="text" id="postMessageText" name="message" value="" required placeholder="Post a message...">
+            <input type="submit" id="postMessageButton" name="postMessage" value="post message">
+          </form>
+          <button id="reloadMessageWallButton" type="submit" onclick="return loadOldMessages()" name="reloadMessageWallButton">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+          </button>
+          <p id ="postErrorBox"></p>
+        </div>
+
+        <div class="messageListWrapper">
+          <ul id="messageArea">
+          </ul>
+        </div>
+
+        <div class="personalInformation">
+          <div id="homeProfilePicDiv"></div>
+          <h3 id="homeProfileHeader">User Information:</h3>
+          <p id="email">Email</p>
+          <p id="firstName">First name</p>
+          <p id="familyName">Family name</p>
+          <p id="gender">Gender</p>
+          <p id="city">City</p>
+          <p id="country">Country</p>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/view" id="browsehomeview">
+      <header>
+        <div class="navtab" id="mynavtab">
+          <img src="static/chat_white.png" id="navicon">
+          <h3 class="navheader">Twidder</h3>
+          <nav>
+            <ul>
+              <li><a onclick="return homeClicked()">Home</a></li>
+              <li><a onclick="return accountClicked()">Account</a></li>
+              <li><form class="browseNavForm" method="post" onsubmit="BrowseButtonClicked(this); return false">
+                  <input type="email" name="browseSearchUser" value="" required placeholder="Search Twidder">
+                  <button type="submit" class="navSearchBtn">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+              </li>
+              <li role="separator" class="divider">|</li>
+              <li><a id="logoutheaderbutton" onclick="return logoutClicked()">Log out</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <div class="bg"></div>
+
+      <div class="browseHomeWrapper">
+        <div class="browsePostMessageWrapper">
+          <form class="browsePostMessageForm" method="post" onsubmit="return browsePostMessageClicked(this)">
+            <input type="text" id="browsePostMessageText" name="message" value="" required placeholder="Post a message...">
+            <input type="submit" id="browsePostMessageButton" name="postMessage" value="post message">
+          </form>
+          <button id="browseReloadMessageWallButton" type="button" onclick="return browseLoadOldMessages()" name="browseReloadMessageWallButton">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+          </button>
+          <p id ="browsePostErrorBox"></p>
+        </div>
+
+        <div class="browseMessageListWrapper">
+          <ul id="browseMessageArea">
+          </ul>
+        </div>
+
+        <div class="personalInformation">
+          <div id="browseHomeProfilePicDiv"></div>
+          <h3>User Information:</h3>
+          <p id="browseEmail">Email</p>
+          <p id="browseFirstName">First name</p>
+          <p id="browseFamilyName">Family name</p>
+          <p id="browseGender">Gender</p>
+          <p id="browseCity">City</p>
+          <p id="browseCountry">Country</p>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/view" id="accountview">
+      <header>
+        <div class="navtab" id="mynavtab">
+          <img src="static/chat_white.png" id="navicon">
+          <h3 class="navheader">Twidder</h3>
+          <nav>
+            <ul>
+              <li><a onclick="return homeClicked()">Home</a></li>
+              <li><a onclick="return accountClicked()" style="color: #00ed7b">Account</a></li>
+              <li><form class="browseNavForm" method="post" onsubmit="BrowseButtonClicked(this); return false">
+                  <input type="email" name="browseSearchUser" value="" required placeholder="Search Twidder">
+                  <button type="submit" class="navSearchBtn">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+              </li>
+              <li role="separator" class="divider">|</li>
+              <li><a id="logoutheaderbutton" onclick="return logoutClicked()">Log out</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <div class="bg"></div>
+
+      <div class="accountcontainer">
+        <form class="changePassForm" id="changePassForm" name="changePassForm" method="post" onsubmit="ChangePasswordClicked(this); return false">
+          <input type="password" name="currPassword" value="" required minlength=7 placeholder="Current password">
+          <input type="password" name="newPassword" value="" required minlength=7 placeholder="New password">
+          <input type="password" name="repNewPassword" value="" required minlength=7 placeholder="Repeat new password">
+          <input type="submit" id="changePasswordButton" name="changePassword" value="Change password">
+        </form>
+        <p id="changePasswordMessageBox"></p>
+        <div id="profilePicDiv">
+        </div>
+        <form method="post" enctype="multipart/form-data" onsubmit="uploadProfileButtonClicked(this); return false">
+          <input type="file" name="fileToUpload" accept="image/*" id="fileToUpload">
+          <input type="submit" value="Change profile picture" name="uploadProfileButton" id="uploadProfileButton">
+        </form>
+      <p id="uploadProfileMessageBox"></p>
+      <div class="dougChart">
+            <canvas id="dougChart" width="400" height="400"></canvas>
+          </div>
+      </div>
+    </script>
+
+    <script type="text/view" id="browseview">
+      <header>
+        <div class="navtab" id="mynavtab">
+          <img src="static/chat_white.png" id="navicon">
+          <h3 class="navheader">Twidder</h3>
+          <nav>
+            <ul>
+              <li><a onclick="return homeClicked()">Home</a></li>
+              <li><a onclick="return accountClicked()">Account</a></li>
+              <li><form class="browseNavForm" method="post" onsubmit="BrowseButtonClicked(this); return false">
+                  <input type="email" name="browseSearchUser" value="" required placeholder="Search Twidder">
+                  <button type="submit" class="navSearchBtn">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </form>
+              </li>
+              <li role="separator" class="divider">|</li>
+              <li><a id="logoutheaderbutton" onclick="return logoutClicked()">Log out</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <div class="bg"></div>
+
+      <div class="browseView">
+        <form class="" method="post" onsubmit="BrowseButtonClicked(this); return false">
+          <input type="email" name="browseSearchUser" value="" required placeholder="Search user">
+          <input id="searchUserButton" type="submit" name="searchUser" value="Search user">
+        </form>
+        <p id ="browsePostErrorBox"></p>
+      </div>
+    </script>
+  </head>
+  <body>
+    <div id="currentView"</div>
+    <script src="{{ url_for('static', filename='client.js') }}" type="text/javascript"></script>
+  </body>
+</html>
